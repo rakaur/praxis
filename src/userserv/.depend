@@ -1,0 +1,4 @@
+m_test.o: m_test.c ../../include/praxis.h ../../include/setup.h \
+ ../../include/irc.h
+m_test2.o: m_test2.c ../../include/praxis.h ../../include/setup.h \
+ ../../include/irc.h

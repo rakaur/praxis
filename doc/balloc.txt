@@ -1,0 +1,116 @@
+/*  praxis: services for TSora IRC networks.
+ *  doc/balloc.txt: Block allocator documentation
+ *
+ *  Copyright (c) 2004 Eric Will <rakaur@malkier.net>
+ *  Copyright (c) 2003-2004 shrike development team.
+ *
+ *  $Id$
+ */
+
+TABLE OF CONTENTS
+-----------------
+  1. Introduction
+  2. Information
+  3. Block allocator API
+
+1. INTRODUCTION
+---------------
+
+Basically we have three ways of getting memory off of the operating system:
+
+  1. mmap() anonymous pages via the MAP_ANON flag.
+  2. mmap() via the /dev/zero trick.
+  3. malloc().
+
+The advantages of 1 and 2: we can munmap() the pages which will return them back
+to the operating system, thus reducing the size of the process as the memory is
+unused.  malloc() on many systems just keeps a heap of memory to itself, which
+never gets given back to the operating system except on exit.  This of course is
+bad.  If we have an event that causes us to allocate 200MB of memory while our
+normal memory usage would be 15MB, malloc() would never give the memory back to
+the operating system and our process size would never go down.  With mmap(),
+we munmap() the block and return it back to the operating system.
+
+2. INFORMATION
+--------------
+
+The bock allcator works by keeping track of what it has allocated via MemBlocks,
+Blocks, and Heaps.
+
+MemBlocks contain information about the specified area of memory.  That is,
+they are an easy way of looking up what Block an area of memory belongs to.
+You'll never have to work with MemBlocks unless you're editing the allocator's
+source code.
+
+Blocks are the structures that keep track of the memory.  When you first make
+a Heap you tell it how many elements per Block you'll need.  Blocks keep track
+of what's free and what's used, and acts accordingly.  If a full Block is used
+and you need more, a Heap will allocate another Block of the first-specified
+size.
+
+Heaps contain multiple Blocks and are what you'll actually use.
+
+So, it's sort of like this:
+
+                Heap
+                 /\
+                /  \
+               /    \
+              /      \
+            Block   Block
+              /\
+             /  \
+            /    \
+           /      \  
+        MemBlock MemBlock
+           /\
+          /  \
+         /    \
+       RAM   RAM
+
+3. BLOCK ALLOCATOR API
+----------------------
+
+The block allocator API (BAPI) is outlined below.
+
+3.1 ballocHeapCreate()
+----------------------
+
+This function sets up an initial Heap from which things can be allocated from.
+For example, for a Heap of Users:
+
+  #define USER_HEAP_SIZE 1024
+  Heap *user_heap;
+  user_heap = ballocHeapCreate(sizeof(User), USER_HEAP_SIZE);
+
+Now you have a Heap, user_heap, with one Block containing 1024 MemBlocks. If
+the Block is full, then it'll allocate another one containing another 1024
+elements.
+
+3.2 ballocHeapAlloc()
+---------------------
+
+This is used to actually allocate off the Heap.  If you want one User:
+
+User *user_p = ballocHeapAlloc(user_heap);
+
+3.3 ballocHeapFree()
+--------------------
+
+This is used to return a free element to the Heap.  This does not actually
+return it to the OS, just our free list.  If you want to deallocate that User:
+
+ballocHeapFree(user_heap, user_p);
+
+3.4 ballocHeapDestroy()
+-----------------------
+
+This is used to completely obliterate a Heap.  In the course of a normal
+session I've never used this function because all of my Heaps are used
+throughout the running program and the exiting takes care of cleaning it up.
+
+To destroy the Heap we made:
+
+ballocHeapDestroy(user_heap);
+
+This returns the 1024 (or more) elements back to the OS.

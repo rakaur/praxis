@@ -1,0 +1,153 @@
+dnl  praxis: services for TSora IRC networks.
+dnl  src/config.c: Configuration file parser.
+dnl
+dnl  Copyright (c) 2004 Eric Will <rakaur@malkier.net>
+dnl  Copyright (c) 2003-2004 shrike development team.
+dnl
+dnl  $Id$
+
+AC_INIT
+
+AC_CONFIG_AUX_DIR(autoconf)
+AC_CONFIG_HEADER(include/setup.h)
+AC_PREFIX_DEFAULT(~/praxis)
+SOURCE_ROOT=`pwd`
+MOD_TARGET=shared_modules
+MOD_INSTALL_TARGET=install_shared_modules
+
+AC_PROG_MAKE_SET
+AC_PROG_CC
+AC_PROG_INSTALL
+AC_EXEEXT
+AC_PATH_PROG(RM, rm)
+AC_PATH_PROG(MV, mv)
+AC_PATH_PROG(CP, cp)
+AC_PATH_PROG(AR, ar)
+AC_PATH_PROG(RANLIB, ranlib)
+AC_C_INLINE
+
+AC_HEADER_STDC
+AC_CHECK_HEADERS(sys/time.h sys/select.h getopt.h)
+
+AC_C_CONST
+AC_TYPE_SIZE_T
+AC_HEADER_TIME
+AC_STRUCT_TM
+
+AC_TYPE_SIGNAL
+AC_FUNC_STRFTIME
+AC_CHECK_FUNCS(select strlcpy strlcat getaddrinfo gettimeofday umask mmap dlopen)
+AC_CHECK_FUNC(socket,, AC_CHECK_LIB(socket, socket))
+AC_CHECK_FUNC(gethostbyname,, AC_CHECK_LIB(nsl, gethostbyname))
+AC_CHECK_FUNC(dlopen,, AC_CHECK_LIB(dl, dlopen))
+
+HARDASSERT="no"
+AC_MSG_CHECKING(if you want hard asserts)
+AC_ARG_ENABLE(hard-assert,
+[  --enable-hard-assert    Enable hard asserts.
+  --disable-hard-assert   Disable hard asserts. ],
+[
+  case "$enableval" in
+  yes)
+    HARDASSERT="yes"
+    AC_DEFINE([HARD_ASSERT], 1, [Uncomment to enable hard asserts.])
+    ;;
+  no)
+    HARDASSERT="no"
+    ;;
+  esac
+])
+AC_MSG_RESULT($HARDASSERT)
+
+LARGENET="no"
+AC_MSG_CHECKING(if you want large network support)
+AC_ARG_ENABLE(large-net,
+[  --enable-large-net      Enable large network support.
+  --disable-large-net     Disable large network support. ],
+[
+  case "$enableval" in
+  yes)
+    LARGENET="yes"
+    AC_DEFINE([LARGE_NETWORK], 1, [Uncomment to enable large network support.])
+    ;;
+  no)
+    LARGENET="no"
+    ;;
+  esac
+])
+AC_MSG_RESULT($LARGENET)
+
+SHARED_MODULES="yes"
+AC_MSG_CHECKING(if you want shared modules)
+AC_ARG_ENABLE(shared-modules,
+[  --enable-shared-modules Enable shared module support.
+  --disable-shared-modules Disable shared module support. ],
+[
+  case "$enableval" in
+  yes)
+    SHARED_MODULES="yes"
+    ;;
+  no)
+    SHARED_MODULES="no"
+    ;;
+  esac
+])
+AC_MSG_RESULT($SHARED_MODULES)
+
+if test "$SHARED_MODULES" = yes; then
+  AC_CHECK_HEADERS(dlfcn.h)
+  AC_SEARCH_LIBS(dlopen, [dl c_r],
+  [
+    AC_DEFINE(HAVE_DLOPEN, 1, [Define if the dlopen function is available.])
+    MOD_TARGET="shared_modules"
+    MOD_INSTALL_TARGET="install_shared_modules"
+    AC_CHECK_FUNC(dlsym, ,
+    [
+      AC_MSG_WARN([dlsym is not available, shared modules disabled])
+      SHARED_MODULES="no"
+    ])
+    AC_CHECK_FUNCS(dlfunc)
+  ],
+  [
+    SHARED_MODULES="no"
+  ])
+fi
+
+if test "$SHARED_MODULES" = yes; then
+  LDFLAGS="${LDFLAGS} -Wl,-export-dynamic"
+  MY_CFLAGS="-shared -fPIC -DPIC"
+fi
+
+if test "$SHARED_MODULES" = no; then
+  AC_DEFINE([STATIC_MODULES], 1, [Undefine to enable shared modules.])
+  MOD_TARGET="static_modules"
+  MOD_INSTALL_TARGET=
+  LIBS="${LIBS} ../modules/libmodules.a userserv/libuserserv.a"
+  LDFLAGS="${LDFLAGS} -L../modules -Luserserv -lmodules -luserserv"
+fi
+
+AC_SUBST(MOD_TARGET)
+AC_SUBST(MOD_INSTALL_TARGET)
+AC_SUBST(MY_CFLAGS)
+AC_SUBST(HARDASSERT)
+AC_SUBST(LARGENET)
+
+if test "$SHARED_MODULES" = no; then
+  tmp_mod=static
+else
+  tmp_mod=shared
+fi
+
+if test "$HARDASSERT" = no; then
+  tmp_assert=soft
+else
+  tmp_assert=hard
+fi
+
+AC_OUTPUT(Makefile sqlite/Makefile src/Makefile modules/Makefile)
+
+echo ""
+echo "Modules ................. $tmp_mod"
+echo "Assert debugging ........ $tmp_assert"
+echo "Large network support ... $LARGENET"
+echo ""

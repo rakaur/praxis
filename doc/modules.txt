@@ -1,0 +1,156 @@
+/*  praxis: services for TSora IRC networks.
+ *  doc/modules.txt: Module system documentation.
+ *
+ *  Copyright (c) 2004 Eric Will <rakaur@malkier.net>
+ *  Copyright (c) 2003-2004 shrike development team.
+ *
+ *  $Id$
+ */
+
+TABLE OF CONTENTS
+-----------------
+  1. Introduction
+  2. Module API
+  2.1 Initialisation
+  2.2 Command hashes
+  2.3 Functions
+  3. More information
+
+1. INTRODUCTION
+---------------
+
+praxis supports run time module loading via the dlopen()-style system.  Modules
+are provided so that one may write modules to extend upon the abilities of
+praxix and are nice and provide a large amount of flexibility for programs.
+Also, all of the cool kids are doing it.
+
+Here's what you need to know to write a module for praxis:
+
+  1. C (or something that can be linked with C object code).
+  2. How praxis and IRC works.
+  3. praxis's functions/command hashes.
+  4. praxis's module API.
+
+2. MODULE API
+-------------
+
+The module API (MAPI) for praxis is outlined below.  Please note that none of
+this is set in stone yet, as this is the first time I've ever delt with dynamic
+modules.
+
+I haven't actually written any of this yet.
+
+2.1 Initialisation
+------------------
+
+After the MAPI loads a module the first function called will be moduleInit().
+This function should be used to add any commands to hash tables and anything
+else that needs to be initialised (such as a Heap or DLinkList).  moduleInit()
+and moduleFini() are the only functions that the MAPI will ever call directly
+via dlsym().  The rest is up to you.
+
+moduleInit() takes the form:
+
+  static uchar moduleInit(void);
+
+Return 1 on success or 0 on failure.
+
+moduleFini() is called before a module is unloaded.  It's used for general
+purpose cleaning and such (such as destroying Heaps).
+
+moduleFini() takes the form:
+
+  static void moduleFini(void);
+
+However, the first thing you need to do is this:
+
+ModuleHeader yourmodule_header = { "m_filename.so", moduleInit, moduleFini };
+
+This gives the static linker the ability to call your initialisation routines.
+If you fail to provide this or name the variable incorrectly (e.g.: not being
+consistant with your file name) then your initialisation functions will not
+be called with static linking.  For example, m_moo.c:
+
+ModuleHeader moo_header = { "m_moo.so", moduleInit, moduleFini };
+
+You must always #include "praxis.h".
+
+2.2 Command hashes
+------------------
+
+praxis uses command hash tables to do lookups on incoming IRC commands.  This
+provides for effecient lookups (O(1) versus O(n) for tables) and a way to easily
+add commands to existing hashes and to make your own hashes.  The hashes are 
+arrays of DLinkLists.  praxis has the following command hashes built in:
+
+  1. irc_cmd_hash
+  2. dcc_cmd_hash
+  3. userserv_cmd_hash
+  4. chanserv_cmd_hash
+  5. ..._cmd_hash
+
+Obviously 5 implies all stock services include their own hashes as I'm not going
+to update this document everytime I add one.  In order to add a command you
+first have to make the command information with a CmdHashEntry.
+
+typedef struct CmdHashEntry CmdHashEntry;
+
+struct CmdHashEntry
+{
+    const char *command;
+    uint level;
+    uint hash;
+    void (*func)(char *, uint, char **);
+};
+
+#define AC_NA    0x00
+#define AC_NONE  0x01
+#define AC_IRCOP 0x02
+#define AC_SRA   0x04
+
+For example, to define a chanserv command "MOO" for csMoo():
+
+static void
+csMoo(char *origin, uint parc, char *parv[])
+{
+    /* MOO! */
+}
+
+CmdHashEntry moo_cmd_entry = { "MOO", AC_NONE, 0, csMoo };
+
+Then, in moduleInit():
+
+cmdhashAdd(&moo_cmd_entry, chanserv_cmd_hash);
+
+And poof.  This will override any other handler for the "moo" command, so be
+careful. 
+
+Now for some explanation of that moo_cmd_entry goop.  The first field is the
+command, the second is the access level required to use it, the third should
+always be initialised to 0, and the fourth is the function to be called.
+
+To remove, you do the same thing:
+
+cmdhashDelete(&moo_cmd_entry, chanserv_cmd_hash);
+
+2.3 Functions
+-------------
+
+Now to actually define the functions you declared in the CmdHashEntry.
+
+All functions called from command hashes are passed three arguments and take the
+following form:
+
+  uchar func(User *user_p, int parc, char *parv[]);
+
+Return 1 on success or 0 on failure.
+
+If you don't know what these arguments are then I think module coding might be
+beyond you.  Study the modules already present and try again.  Don't give up!
+
+3. MORE INFORMATION
+-------------------
+
+If you want to be able to do more than adding commands, please invest time in
+reading on how the event-driven code works.  You can find detailed documentation
+in doc/event.txt.

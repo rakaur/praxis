@@ -1,0 +1,529 @@
+/*  praxis: services for TSora IRC networks.
+ *  doc/praxis.plan: Pre-code planning documentation. 
+ *
+ *  Copyright (c) 2004 Eric Will <rakaur@malkier.net>
+ *  Copyright (c) 2003-2004 shrike development team.
+ *
+ *  $Id$
+ */
+
+Last update: 2004-04-24
+
+praxis -- a set of services for TSora networks
+==============================================
+
+This program is free but copyrighted software; see doc/license for details.
+
+Information about praxis may be found at http://praxis.malkier.net/.
+
+TABLE OF CONTENTS
+-----------------
+  1. Introduction
+  1.1 What is praxis?
+  1.2 What about shrike?
+  1.3 What services will praxis offer?
+  2. Code structure
+  2.1 Event-driven system
+  2.2 Memory storing system
+  3. Configuration File
+  3.1 uplink{} block
+  3.2 serverinfo{} block
+  3.3 userserv{} block
+  3.4 chanserv{} block
+  4. Notes
+
+1. QUESTIONS
+============
+
+1.1 What is praxis?
+-------------------
+
+praxis aims to provide services for TSora IRC networks by introducing features
+not seen in other services programs.  praxis's predecessor, shrike, provided
+Undernet-style username registration for channel management.  praxis aims to
+extend on shrike by adding additional services (such as oper/adminserv, ALIS,
+etc) and extending the coding to a higher level with modular design.
+
+1.2 What about shrike?
+----------------------
+
+shrike has not been abandoned.  Shrike still serves the purpose it was written
+for: to provide username and channel registration.  But unfortunately that's
+all it can do.  praxis will provide much more while also allowing for an
+easily extended code base.  shrike has reached a point of fair stability and
+will be continued with features that are fit for its scope of operation.
+shrike's code is, in my opinion, decent but not extensible easily.  Everything
+is mixed together and this does that and that does this and I've already had
+instances of conflicting routines without realizing it.  It's just not able
+to be extended easily.  I *could* rework shrike but it would take far more
+work than just starting from scratch.
+
+Naturally, praxis's username/channel code will likely share a lot of code
+with shrike.  Although I did most of the work on Shrike, the other (as of now)
+two developers deserve to be recognized for their code and/or ideas, etc:
+
+    sycobuny, Stephen Belcher <sycobuny@malkier.net>
+    rintaun, Matt Lanigan <rintaun@projectxero.net>
+
+And to any other developer that has contributed to shrike.
+
+1.3 What services will praxis offer?
+------------------------------------
+
+praxis will continue to offer the basis of shrike: userserv and chanserv.
+praxis will also include an IRCnet-style ALIS (advanced listing) service along
+with some form of oper/admin service.
+
+praxis will also allow users defined in the configuration file to DCC chat with
+one of the services for secure/easy traffic.
+
+A lot of these things were planned for shrike, but were abandoned after it
+became clear it would mangle the code.
+
+2. CODE STRUCTURE
+=================
+
+2.1 Event-driven system
+-----------------------
+
+praxis will follow an event-driven system similiar to GUI and/or threaded
+applications.  "Event" in this sense does not apply to the previous event
+system found in shrike.  That event system was a system of adding a timed event
+to be executed every N seconds.  praxis will have these too, but I will name
+them something more apt such as "timers" instead of "events."
+
+Now that the terminology is out of the way, here is how the system will work.
+There will be a table of events that can happen.  When a function wants to be
+called when a certain event happens (eg a new user connects) it will add itself
+to the event's (in this case, EV_NICK's) table entry as a routine to be called.
+However, there will be two "special" routines: first, and last.  These two
+events (which are self-explanatory) could only consist of one routine each,
+whereas the other "non-special" routines will be a doubly-linked list of
+routines to be called in the order in which they're added to the list (a
+first-in-first-out queue).
+
+When an event happens, it will be added to a doubly-linked first-in-first-out
+queue of events that have happened.  Whenever an event has happened and is
+waiting in the queue, a routine to process the queue and match the event to its
+table entry will be called and will call the associated routines as defined in
+the event table.
+
+This semi-complex system will provide for an extremely modular and extensible
+design and extremely clean code.
+
+2.2 Memory storing system
+-------------------------
+
+The most important part of memory storing is keeping information on the state
+of IRC structures such as channels and users.  The memory system will be far
+more CPU-friendly and far less RAM-friendly than the system used in shrike.
+This is usually not a problem as most servers are short on CPU but not on RAM.
+The values that were previously dynamically allocated will be static via an
+autoconf option.  This will reduce strdup() calls and as such CPU usage.
+
+First will start with a draft of the storage structs:
+
+<linked list structs>
+
+typedef struct Connection
+{
+    char name[HOSTLEN + 1];    /* name associated with the connection */
+
+    LinkedList sendq;          /* a sendq so we don't lose data */
+
+    int fd;                    /* the file descriptor */
+    time_t last_recv_on;       /* time we last got data */
+
+    unsigned int flags;        /* CF_ bitmask */
+} Connection;
+
+#define CF_SERV       0x00000001
+#define CF_DCCOUT     0x00000002
+#define CF_DCCIN      0x00000004
+
+#define CF_CONNECTING 0x00000008
+#define CF_LISTENING  0x00000010
+#define CF_CONNECTED  0x00000020
+#define CF_DEAD       0x00000040
+
+typedef struct Uplink
+{
+    char name[HOSTLEN + 1];     /* the server name */
+    char host[HOSTLEN + 1];     /* connection address */
+    char pass[PASSLEN + 1];     /* IRC password */
+    char vhost[HOSTLEN + 1];    /* ip or host to bind to */
+    unsigned int port;          /* connection port */
+} Uplink;
+
+typedef struct Server
+{
+    char name[HOSTLEN + 1];   /* server name */
+
+    LinkedList users;         /* list of users */
+
+    unsigned int flags;       /* SF_ bitmask */
+    int hash;                 /* hash id for quick reference */
+} Server;
+
+#define SF_UPLINK 0x01
+#define SF_HIDE   0x02
+
+typedef struct User
+{
+    char nick[NICKLEN + 1];      /* nickname */
+    char user[USERLEN + 1];      /* username/ident */
+    char host[HOSTLEN + 1];      /* hostname */
+
+    Server *server_p;            /* pointer to Server */
+    MyUser *myuser_p;            /* pointer to MyUser (or NULL) */
+
+    LinkedList channels;         /* list of joined channels */
+
+    unsigned int fl_offenses;    /* number of times triggered */
+    unsigned int fl_msgs;        /* message number */
+    time_t fl_lastmsg;           /* last message received time */
+
+    unsigned int flags;          /* UF_ bitmask */
+    int hash;                    /* hash id for quick reference */
+} User;
+
+#define UF_IRCOP 0x01
+#define UF_ADMIN 0x02
+
+typedef struct Channel
+{
+    char name[CHANLEN + 1];    /* channel name */
+    char key[KEYLEN + 1];      /* cmode +k key (or NULL) */
+
+    MyChannel *mychannel_p;    /* pointer to MyChannel (or NULL) */
+
+    LinkedList users;          /* list of joined users */
+
+    unsigned int limit;        /* cmode +l limit (or 0) */
+    unsigned int modes;        /* CMODE_ bitmask */
+    time_t timestamp;          /* creation date */
+
+    int hash;                  /* hash id for quick reference */
+} Channel;
+
+typedef struct ChannelUser
+{
+    User *user_p;          /* pointer to User */
+    Channel *channel_p;    /* pointer to Channel */
+
+    unsigned int modes;    /* CMODE_ bitmask for status modes */
+} ChannelUser;
+
+#define CMODE_BAN    0x00000000
+#define CMODE_INVITE 0x00000001
+#define CMODE_KEY    0x00000002
+#define CMODE_LIMIT  0x00000004
+#define CMODE_MOD    0x00000008
+#define CMODE_NOEXT  0x00000010
+#define CMODE_OP     0x00000020
+#define CMODE_PRIV   0x00000040
+#define CMODE_SEC    0x00000080
+#define CMODE_TOPIC  0x00000100
+#define CMODE_VOICE  0x00000200
+#define CMODE_EXEMPT 0x00000000
+#define CMODE_INVEX  0x00000000
+
+typedef struct MyUser
+{
+    char name[NICKLEN + 1];       /* username */
+    char pass[PASSLEN + 1];       /* password */
+    char email[HOSTLEN + 16];     /* email */
+
+    User *user_p;                 /* pointer to User (or NULL) */
+    SRA *sra_p;                   /* pointer to SRA (or NULL) */
+
+    LinkedList channel_access;    /* list of ChannelAccess */
+
+    time_t registered;            /* time registered */
+    time_t last_used_on;          /* time last used */
+
+    unsigned int failed_num;      /* failed logins (or 0) */
+    char *last_failed_by;         /* failed n!u@h (or NULL) */
+    time_t last_failed_on;        /* last failed attempt on (or 0) */
+
+    unsigned long auth_key;       /* email-authorization key */
+    char *temp_email;             /* temporary email */
+
+    unsigned int flags;           /* MU_ bitmask */
+    int hash;                     /* hash id for quick reference */
+} MyUser;
+
+#define MU_HIDEMAIL 0x00000001
+#define MU_HOLD     0x00000002
+#define MU_NEVEROP  0x00000004
+#define MU_NOOP     0x00000008
+#define MU_WAITAUTH 0x00000010
+
+typdef struct MyChannel
+{
+    char name[CHANLEN + 1];       /* channel name */
+
+    Channel *channel_p;           /* pointer to Channel (or NULL) */
+    MyUser *founder;              /* pointer to founder */
+    MyUser *successor;            /* pointer to successor (or NULL) */
+
+    LinkedList channel_access;    /* list of ChannelAccess */
+
+    time_t registered;            /* time registered */
+    time_t last_used_on;          /* time last used */
+
+    unsigned int mlock_on;        /* cmode + mode lock */
+    unsigned int mlock_off;       /* cmode - mode lock */
+    unsigned int mlock_limit;     /* cmode +l mode lock */
+    char mlock_key[KEYLEN + 1];   /* cmode +k mode lock */
+
+    unsigned int flags;           /* MC_ bitmask */
+    int hash;                     /* hash id for quick reference */
+} MyChannel;
+
+#define MC_HOLD    0x00000001
+#define MC_NEVEROP 0x00000002
+#define MC_SECURE  0x00000004
+#define MC_VERBOSE 0x00000008
+
+typedef struct ChannelAccess
+{
+    char *hostmask;            /* hostmask (or NULL) */
+
+    MyUser *myuser_p;          /* pointer to MyUser */
+    MyChannel *mychannel_p;    /* pointer to MyChan */
+
+    unsigned int level;        /* CA_ bitmask */
+} ChannelAccess;
+
+#define CA_VOP       0x00000001
+#define CA_AOP       0x00000002
+#define CA_SOP       0x00000004
+#define CA_SUCCESSOR 0x00000008
+#define CA_FOUNDER   0x00000010
+
+typedef struct Operator
+{
+    char name[NICKLEN + 1];              /* operator block name */
+    char host[USERLEN + HOSTLEN + 1];    /* user@host */
+    char pass[PASSLEN + 1];              /* password */
+
+    MyUser *myuser_p;                    /* pointer to MyUser */
+
+    unsigned int flags;                  /* OF_ bitmask */
+} Operator;
+
+#define OF_DCC      0x00000001
+#define OF_OPERSPY  0x00000002
+#define OF_OP       0x00000004
+#define OF_TAKEOVER 0x00000008
+
+#define OF_REHASH   0x00000010
+#define OF_RESTART  0x00000020
+#define OF_SHUTDOWN 0x00000040
+#define OF_SRA      0x00000080
+
+struct me
+{
+    char name[HOSTLEN + 1];     /* our server name */
+    char *desc;                 /* free form description */
+
+    Server *server_p;           /* pointer to our Server */
+
+    char *admin_name;           /* our admin's name */
+    char *admin_email;          /* our admin's email */
+} me;
+
+struct settings
+{
+    char vhost[HOSTLEN + 1];        /* ip or host to bind to */
+    char *network_name;             /* the network's name */
+
+    Server *uplink_p;               /* pointer to our uplink's Server */
+
+    unsigned int reconnect_time;    /* delay between reconnect attempts */
+    unsigned int ping_time;         /* delay between PINGs after no data */
+    unsigned int expire_time;       /* limit for inactive registrations */
+
+    char *mta_path;                 /* path to mail transfer agent */
+    unsigned short auth_type;       /* email verification or not */
+
+    unsigned int max_users;         /* maximum MyUsers an email can have */
+    unsigned int max_channels;      /* maximum MyChans a MyUser can have */
+    unsigned short log_level;       /* logging level */
+    unsigned int max_fds;           /* the highest fd we have open */
+} settings;
+
+#define AUTH_NONE  0
+#define AUTH_EMAIL 1
+
+struct globals
+{
+    time_t start;              /* TS we start running */
+
+    unsigned int run_flags;    /* our run flags */
+
+    unsigned char connected;    /* if we're connected (0 or 1) */
+    unsigned char bursting;     /* if we're bursting (0 or 1) */
+} globals;
+
+/* run flags */
+#define RF_STARTING  0x00000001    /* starting up */
+#define RF_REHASH    0x00000002    /* need a rehash */
+#define RF_REHASHING 0x00000004    /* rehashing */
+#define RF_RESTART   0x00000008    /* restart after shutdown */
+#define RF_SHUTDOWN  0x00000010    /* shutdown */
+#define RF_NOFORK    0x00000020    /* don't fork */
+
+/* log levels */
+#define LF_NONE   0    /* don't log anything */
+#define LF_INFO   1    /* log general info */
+#define LF_ERROR  2    /* LF_INFO + errors */
+#define LF_DEBUG1 3    /* LF_INFO + LF_ERROR + io traffic */
+#define LF_DEBUG2 4    /* LF_INFO + LF_ERROR + function calls */
+#define LF_DEBUG3 5    /* LF_INFO + LF_ERROR + LF_DEBUG1 + LF_DEBUG2 */
+
+struct userserv
+{
+    char nick[NICKLEN + 1];        /* userserv's nickname */
+    char user[USERLEN + 1];        /* userserv's username */
+    char host[HOSTLEN + 1];        /* userserv's hostname */
+    char *gecos;                   /* userserv's "real name" (freeform) */
+
+    unsigned short max_users;      /* max MyUser's per email address */
+
+    unsigned int default_flags;    /* MU_ upon register */
+};
+
+struct chanserv
+{
+    char nick[NICKLEN + 1];        /* chanserv's nickname */
+    char user[USERLEN + 1];        /* chanserv's username */
+    char host[HOSTLEN + 1];        /* chanserv's hostname */
+    char *gecos;                   /* chanserv's "real name" (freeform) */
+
+    unsigned short max_chans;      /* max MyChannel's per MyUser */
+    unsigned char join_chans;      /* join registered channels (0 or 1) */
+    unsigned char part_chans;      /* part empty channels (0 or 1) */
+
+    unsigned int default_flags;    /* MC_ upon register */
+};
+
+3. CONFIGURATION FILE
+=====================
+
+The configuration file will be bind-style and I will use Jeremy's modified
+configparse.c from csircd as the parser.
+
+3.1 uplink{} block
+------------------
+
+The uplink{} block will be used to specify one or more servers to connect to
+that act as uplinks to the network.  Example:
+
+uplink "irc.uplink.net"
+{
+    host = "127.0.0.1";
+    vhost = "192.168.0.10";
+    password = "linkage";
+    port = 7500;
+};
+
+The name in quotations is the IRC server name.  `host' is the actual address to
+connect() to.  `vhost' is the address to bind() to. `password' is the IRC
+password for PASS.  `port' is the port to connect() to.
+
+3.2 serverinfo{} block
+----------------------
+
+The serverinfo{} block will be used to specify how we appear and interact with
+the IRC network.  Example:
+
+serverinfo
+{
+    name = "foo.services";
+    description = "foo services";
+    vhost = "192.168.0.10";
+
+    reconnect_time = 5;
+    ping_time = 5;
+
+    admin_name = "foo bar";
+    admin_email = "foo@bar.baz";
+};
+
+`name' is our IRC server name.  `description' is our IRC server comment field.
+`vhost' is the address to bind() to.  `reconnect_time' is the period of time
+between uplink connection attempts.  `ping_time' is the time to wait before
+sending a PING after no data.  `admin_name' is the administrator's name.
+`admin_email' is the administrator's email address.
+
+3.3 userserv{} block
+--------------------
+
+The userserv{} block will be used to specify settings for the username
+registration service.  Example:
+
+userserv
+{
+    nick = "Y";
+    user = "uservice";
+    host = "foo.services";
+    real = "/msg Y HELP";
+
+    max_users = 5;
+
+    default_flags = { none; };
+};
+
+`nick' is userserv's nickname on IRC.  `user' is userserv's username/ident on
+IRC.  `host' is userserv's hostname on IRC.  `real' is userserv's "real name"
+on IRC.  `max_users' specifies maximum usernames per email address.
+`default_flags' specifies default MU_ flags upon registration.
+
+3.4 chanserv{} block
+--------------------
+
+The chanserv{} block will be used to specify settings for the channel
+registration service.  Example:
+
+chanserv
+{
+    nick = "X";
+    user = "cservice";
+    host = "foo.services";
+    real = "/msg X HELP";
+
+    max_chans = 5;
+
+    join_chans;
+    part_chans;
+
+    default_flags = { secure; verbose; };
+};
+
+`nick' is chanserv's nickname on IRC.  `user' is chanserv's username/ident on
+IRC.  `host' is chanserv's hostname on IRC.  `real' is chanserv's "real name"
+on IRC.  `max_chans' specifies maximum channels per username.  `join_chans'
+specifies whether or not to join registered channels.  `part_chans' specifies
+whether or not to part empty channels.  'default_flags' specifies default MC_
+flags upon registration.
+
+4. NOTES
+========
+
+I want to do dynamic load modules, but I think it's too far beyond my abilities.
+I've talked with AndroSyn about it, and it seems fairly simple to implement
+while remaining hard to provide portability.  There's also the problem of
+being able to specify static or dynamic at compile time... not sure how to go
+about that.  I have a pretty clear idea of how to implement the actual system
+as it's not that complex... but the details are complex.
+
+Update: I believe I can do this now.  I've played with the library on FreeBSD
+and that should work on most modern Unicies.  I've heard OSX doesn't do
+dlopen() and HP-UX or something uses shl_open().  I know I can do these on a
+limited portability scale.  Now what's left is to make static modules an option
+and/or write wrappers for shl_load() or dlopen() or whatever... this is where
+I'm not caught up.
+
+EOF for now.

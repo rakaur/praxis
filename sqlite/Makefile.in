@@ -1,0 +1,86 @@
+#  praxis: services for TSora IRC networks.
+#  Makefile.in: Makefile stub for autoconf.
+#
+#  Copyright (c) 2004 Eric Will <rakaur@malkier.net>
+#  Copyright (c) 2003-2004 praxis development team.
+#
+#  $Id$
+
+CC		= @CC@
+RM		= @RM@
+MV		= @MV@
+CP		= @CP@
+AR		= @AR@
+RANLIB		= @RANLIB@
+MKDEP		= @CC@ -MM -DNDEBUG
+
+# Default CFLAGS
+CFLAGS		= -g -O2 -DNDEBUG
+
+LIBS		= @LIBS@
+LDFLAGS		= @LDFLAGS@
+CPPFLAGS	= @CPPFLAGS@
+
+default: all
+
+BASE_SRCS =			\
+  attach.c			\
+  auth.c			\
+  btree.c			\
+  btree_rb.c			\
+  build.c			\
+  copy.c			\
+  date.c			\
+  delete.c			\
+  expr.c			\
+  func.c			\
+  hash.c			\
+  insert.c			\
+  main.c			\
+  opcodes.c			\
+  os.c				\
+  pager.c			\
+  parse.c			\
+  pragma.c			\
+  printf.c			\
+  random.c			\
+  select.c			\
+  table.c			\
+  tokenize.c			\
+  trigger.c			\
+  update.c			\
+  util.c			\
+  vacuum.c			\
+  vdbe.c			\
+  vdbeaux.c			\
+  where.c
+
+SRCS = ${BASE_SRCS}
+
+OBJS = ${SRCS:.c=.o}
+
+all: libsqlite.a
+
+build: all
+
+libsqlite.a: $(OBJS)
+	$(RM) -f $@
+	$(AR) cqv $@ $(OBJS)
+	$(RANLIB) $@
+
+install: build
+
+.c.o:
+	${CC} ${CPPFLAGS} ${CFLAGS} -c $<
+
+.PHONY: depend clean distclean
+depend:
+	${MKDEP} ${CPPFLAGS} ${BASE_SRCS} > .depend
+
+clean:
+	${RM} -f *.o *.exe *~ version.c praxis.core core praxis libsqlite.a
+
+distclean: clean
+	${RM} -f Makefile version.c.last
+
+include .depend

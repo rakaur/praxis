@@ -1,0 +1,80 @@
+#  praxis: services for TSora IRC networks.
+#  Makefile.in: Makefile stub for autoconf.
+#
+#  Copyright (c) 2004 Eric Will <rakaur@malkier.net>
+#  Copyright (c) 2003-2004 shrike development team.
+#
+#  $Id$
+
+CC		= @CC@
+RM		= @RM@
+MV		= @MV@
+CP		= @CP@
+INSTALL		= @INSTALL@
+PREFIX		= @prefix@
+BIN		= praxis@EXEEXT@
+
+SHELL=/bin/sh
+SUBDIRS=sqlite modules src
+CLEANDIRS = ${SUBDIRS}
+
+MAKE = make ${MFLAGS}
+
+all: build
+
+build:
+	-@if [ ! -f include/setup.h ] ; then \
+		echo "Hmm...doesn't look like you've run configure..."; \
+		echo "Doing so now."; \
+		sh configure; \
+	fi
+	cd src/; make @MOD_TARGET@; cd ..;
+	@for i in $(SUBDIRS); do \
+		echo "build ==> $$i"; \
+		cd $$i; \
+		${MAKE} || exit; cd ..; \
+	done
+
+clean:
+	${RM} -f *~ core praxis.core
+	@for i in $(CLEANDIRS); do \
+		echo "clean ==> $$i"; \
+		cd $$i; \
+		${MAKE} clean; cd ..; \
+	done
+	-@if [ -f include/setup.h ] ; then \
+		echo "To really restart installation, make distclean"; \
+	fi
+
+distclean:
+	${RM} -f Makefile *~ *.orig core praxis.core
+	${RM} -f config.status config.cache config.log
+	cd include; ${RM} -f setup.h *~ *.orig; cd ..
+	@for i in $(CLEANDIRS); do \
+		echo "distclean ==> $$i"; \
+		cd $$i; \
+		${MAKE} distclean; cd ..; \
+	done
+
+depend:
+	@for i in $(SUBDIRS); do \
+		echo "depend ==> $$i"; \
+		cd $$i; \
+		${MAKE} depend; cd ..; \
+	done
+
+install: all
+	$(INSTALL) -m 755 -d $(PREFIX)
+	$(INSTALL) -m 755 -d $(PREFIX)/var
+	$(INSTALL) -m 755 -d $(PREFIX)/etc
+	$(INSTALL) -m 640 -c doc/example.conf $(PREFIX)/etc
+	@for i in $(SUBDIRS); do \
+		echo "install ==> $$i"; \
+		cd $$i; \
+		${MAKE} install; \
+		cd ..; \
+	done
+
+	@echo "----------------------------------------------------------------"
+	@echo ">>> Remember to cd to ${PREFIX} and edit your config file."
+	@echo "----------------------------------------------------------------"

@@ -1,0 +1,125 @@
+#  praxis: services for TSora IRC networks.
+#  Makefile.in: Makefile stub for autoconf.
+#
+#  Copyright (c) 2004 Eric Will <rakaur@malkier.net>
+#  Copyright (c) 2003-2004 praxis development team.
+#
+#  $Id$
+
+CC		= @CC@
+AR		= @AR@
+RM		= @RM@
+MV		= @MV@
+CP		= @CP@
+INSTALL		= @INSTALL@
+PREFIX		= @prefix@
+BIN		= praxis@EXEEXT@
+MKDEP		= @CC@ -MM -I../include -DPREFIX=\"@prefix@\"
+
+# Default CFLAGS
+#CFLAGS		= -g -O2 -Wall
+
+# Developer CFLAGS
+CFLAGS		= -g -O0 -Wunused -Wall -ggdb -pedantic -Wshadow -Wmissing-declarations -Wno-long-long
+
+CFLAGS		+= -I../include -DPREFIX=\"@prefix@\"
+
+VERSION		= devel
+
+LIBS		= @LIBS@ ../sqlite/libsqlite.a
+LDFLAGS		= @LDFLAGS@ -L../sqlite -lsqlite
+CPPFLAGS	= @CPPFLAGS@
+
+default: all
+
+CORE_SRCS =			\
+  core/balloc.c			\
+  core/channel.c		\
+  core/config.c			\
+  core/configparse.c		\
+  core/connection.c		\
+  core/dlink.c			\
+  core/event.c			\
+  core/hash.c			\
+  core/ilog.c			\
+  core/imem.c			\
+  core/io.c			\
+  core/irc.c			\
+  core/module.c			\
+  core/net.c			\
+  core/praxis.c			\
+  core/send.c			\
+  core/sendq.c			\
+  core/server.c			\
+  core/timer.c			\
+  core/token.c			\
+  core/uplink.c			\
+  core/util.c			\
+  core/user.c			\
+  core/version.c
+
+IRC_SRCS =			\
+  irc/m_error.c			\
+  irc/m_nick.c			\
+  irc/m_pass.c			\
+  irc/m_ping.c			\
+  irc/m_quit.c			\
+  irc/m_server.c		\
+  irc/m_uid.c
+
+USERSERV_SRCS =			\
+  userserv/m_test.c		\
+  userserv/m_test2.c		\
+
+ALL_SRCS = ${CORE_SRCS} ${IRC_SRCS}
+
+OBJS = ${ALL_SRCS:.c=.o}
+USERSERV_OBJS = ${USERSERV_SRCS:.c=.o}
+
+all: version praxis
+
+build: all
+
+shared_modules: ${USERSERV_OBJS}
+	${CC} ${CFLAGS} -shared -fPIC -DPIC -o userserv/m_userserv.so ${USERSERV_OBJS}
+	${MV} userserv/m_userserv.so ../modules
+
+static_modules: libuserserv.a
+
+libuserserv.a: $(USERSERV_OBJS)
+	$(RM) -f userserv/$@
+	$(AR) cqv userserv/$@ $(USERSERV_OBJS)
+	$(RANLIB) userserv/$@
+
+praxis: $(OBJS)
+	${CC} ${CFLAGS} ${LDFLAGS} -o $@ ${OBJS} ${LIBS}
+	$(MV) core/version.c core/version.c.last
+
+install: build
+	$(INSTALL) -m 755 -d $(PREFIX)/bin
+	$(INSTALL) -m 755 -c $(BIN) $(PREFIX)/bin
+
+deinstall:
+	if [ -d ${PREFIX} ] ; then \
+		$(RM) -rf ${PREFIX}; \
+	fi
+
+version:
+	/bin/sh ./core/version.sh $(VERSION)
+
+.c.o:
+	${CC} ${CPPFLAGS} ${CFLAGS} -c $< -o $@
+
+.PHONY: depend clean distclean
+depend:
+	${MKDEP} ${CPPFLAGS} ${ALL_SRCS} > .depend
+
+clean:
+	${RM} -f core/*.o *.exe core/*~ core/version.c core/praxis.core core/core praxis
+	${RM} -f irc/*.o irc/*~
+	${RM} -f userserv/*.o userserv/*.so userserv/*~ userserv/*.a
+
+distclean: clean
+	${RM} -f Makefile core/version.c.last
+
+include .depend

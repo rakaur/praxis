@@ -1,0 +1,160 @@
+/*  praxis: services for TSora IRC networks.
+ *  README: General documentation
+ *
+ *  Copyright (c) 2004 Eric Will <rakaur@malkier.net>
+ *  Copyright (c) 2003-2004 praxis development team.
+ *
+ *  $Id$
+ */
+
+praxis -- a set of services for TSora networks
+==============================================
+
+This program is free but copyrighted software; see doc/license for details.
+
+Information about praxis may be found at http://praxis.malkier.net/.
+
+TABLE OF CONTENTS
+-----------------
+  1. Credits
+  2. Presentation
+  3. Installation
+  4. Command line options
+  5. Contact and mailing list
+
+1. CREDITS
+----------
+
+While praxis isn't directly based on any other program it borrows a decent
+amount of code from ircd-ratbox and Sentinel2.
+
+Information about ircd-ratbox can be found at http://www.ircd-ratbox.org/.
+Information about Sentinel2 can be found at http://ircd.botbay.net/sentinel/.
+
+Currently praxis is largely written by me:
+  rakaur, Eric Will <rakaur@malkier.net>
+
+Thanks to testers, contributors, etc:
+  Hwy, W. Campbell <wcampbel@botbay.net>
+  madragoran, Mike Campbell <madragoran@avendesora.net>
+  nenolod, William Pitcock <nenolod@nenolod.net>
+  rintaun, Matt Lanigan <rintaun@projectxero.net>
+  sycobuny, Stephen Belcher <sycobuny@malkier.net>
+
+Special thanks to:
+  Hwy, for your continued patience while I badger you endlessly.
+  rintaun, for the SQLite database work.
+  sycobuny, for your continued not-killing-me while I badger your code.
+  tanka, for the book I will someday repay you for.
+
+Files that I didn't write most of:
+  src/balloc.c, this was stolen from ircd-ratbox and modified.
+  src/configparse.c, this was stolen from from csircd and modified.
+  src/dlink.c, this was stolen from ircd-ratbox and modified.
+  src/event.c, idea from Hwy, mostly written by me.
+  src/hash.c, this was stolen from ircd-ratbox and modified.
+  src/io.c, this was originally based on Hwy's code.
+  src/match.c, this was stolen from Sentinel2 (from IRCnet ircd).
+  src/net.c, this was originally based on Hwy's code.
+  src/send.c, this was originally based on Hwy's code.
+  src/timer.c, this was stolen from ircd-ratbox.
+
+2. PRESENTATION
+---------------
+
+praxis is a set of services for TSora-based IRC networks that allows users to
+manage their channels in a secure and efficient way and allows operators to
+manage various things about their networks.
+
+praxis currently works with:
+  ircd-ratbox 1.x and 2.x in TS5/TS6
+  ircd-hybrid 7.0 or later in TS5/TS6
+  ircd-hybrid 6.0 or later in TS3/TS5
+  csircd 1.4 or later in TS3/TS5
+
+praxis may *possibly* work with other TSora IRCd's running at least TS3.
+
+praxis is closer to being based on ircd than it is on Andrew Church's
+IRCServices.  Anope/Epona, Cygnus, OperStats, Auspice, etc are all based on
+IRCServices and as such have very old legacy code that none of them, except
+Church, understands.  praxis was written completely from scratch with the more
+complex pieces people usually take from IRCServices being taken from the most
+modern and actively developed ircd today: ircd-ratbox.
+
+3. INSTALLATION
+---------------
+
+See the INSTALL file.
+
+4. COMMAND LINE OPTIONS
+-----------------------
+
+Normally, praxis can be run simply by invoking the "praxis" executable.  praxis
+will then use the defaults specified in the configuraiton file and connect
+to the specified uplink server. Alternatively, any of the following
+command-line options can be specified to change the default behavior:
+  -c </path/to/file> - specify the configuration file
+  -d <1|2|3>         - start in debugging mode
+  -h                 - print the help message and exit
+  -n                 - do not fork into the background
+  -v                 - print the version information and exit
+
+praxis also handles the following signals:
+  HUP  - force a REHASH
+  TERM - force a SHUTDOWN
+  USR2 - force a RESTART
+
+Upon starting, praxis will parse its command-line arguments, open its log file,
+parse its configuration file, load its database, connect to the uplink,
+and (assuming -n is not specified) detach into the background.  If praxis
+encounters an error while parsing the configuration or database files it will
+terminate immediately. Otherwise, it will run until killed or otherwise stopped.
+
+5. CONTACT AND MAILING LIST
+---------------------------
+
+Okay, here's the deal. We enjoy coding this program, and we do it for free. You
+didn't pay anything for this, did you? No. Our time and our effort went into
+making this program, and now you want us to help you with it, too. Well, that's
+fine, but do us a favor: READ THE DOCS. Unlike many other programs we've
+included some fairly extensive documentation. The configuration file itself has
+a description of every option as well as examples of: how it's used, what it
+does, and what happens if you turn it on or off. *Please* don't waste our time
+by asking asinine questions which are clearly answered in the documentation.
+You'll just make us regret making this program so easy to use that it requires
+zero intelligence.
+
+That said, if you've skimmed the docs and can't find your answer feel free to
+ask. I've been unable to find the answer I was looking for in many programs
+myself so I don't mind. Just don't ask us to set it up for you. It's too easy.
+
+For announcements and discussions about praxis, subscribe to the mailing list
+by sending a blank email to praxis-subscribe@lists.malkier.net.
+
+For bug reports, please use these forums:
+http://praxis.malkier.net/modules.php?name=Forums&file=viewforum&f=3.
+
+If you're reporting a bug, here's some advice. Be sure to include information
+on how to reproduce the problem. If you can't reproduce it, you're likely out
+of luck. You can go ahead and report the problem but chances are if we can't
+find the cause then we can't fix it. If praxis crashed (with a core file) be
+sure to include a backtrace for us. You can do this by running something along
+the lines of "gdb bin/praxis praxis.core" and typing "bt" at the "(gdb)"
+prompt. If you do all of these things and still manage to keep your report
+short and concise you will be loved.
+
+For patches/modifications to the source code that you would like to share or
+otherwise comment on, please use these forums:
+http://praxis.malkier.net/modules.php?name=Forums&file=viewforum&f=2.
+
+For general discussion and/or support, please use these forums:
+http://praxis.malkier.net/modules.php?name=Forums&file=viewforum&f=1.
+
+If your problem requires extensive debugging in a real-time situation we may
+ask that you find us on IRC:
+  rakaur @ #praxis on irc.malkier.net
+  sycobuny @ #praxis on irc.malkier.net
+  rintaun @ #praxis on irc.malkier.net
+
+If you've read this far, congratulations. You are among the few elite people
+that actually read documentation. Thank you.

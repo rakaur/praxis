@@ -1,0 +1,27 @@
+/*  praxis: services for TSora IRC networks.
+ *  doc/todo.txt: A TODO list for praxis.
+ *
+ *  Copyright (c) 2004 Eric Will <rakaur@malkier.net>
+ *  Copyright (c) 2003-2004 shrike development team.
+ *
+ *  $Id$
+ */
+
+praxis-1.0:
+
+NOTE: Things in this are not gauranteed to be coded.  They're just random
+thoughts.
+
+X = completed
+
+MUST BE IN praxis-1.0a1:
+[X] - event system
+[X] - timers
+[X] - modules (static and shared via dlopen())
+[X]   . api
+[X]   . cmdhash crap
+[X] - io stuff
+[ ] - parser
+[ ] - synching to network
+[ ]   . users
+[ ]   . channels

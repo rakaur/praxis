@@ -1,0 +1,83 @@
+#  praxis: services for TSora IRC networks.
+#  Makefile.in: Makefile stub for autoconf.
+#
+#  Copyright (c) 2004 Eric Will <rakaur@malkier.net>
+#  Copyright (c) 2003-2004 praxis development team.
+#
+#  $Id$
+
+CC		= @CC@
+RM		= @RM@
+MV		= @MV@
+CP		= @CP@
+PREFIX		= @prefix@
+INSTALL		= @INSTALL@
+BIN		= praxis@EXEEXT@
+MKDEP		= @CC@ -MM -I../include
+
+# Default CFLAGS
+#CFLAGS		= -g -O2 -Wall
+
+# Developer CFLAGS
+CFLAGS		= -g -O0 -Wunused -Wall -ggdb -pedantic -Wshadow -Wmissing-declarations -Wno-long-long
+
+CFLAGS		= @MY_CFLAGS@ -I../include
+
+default: all
+
+SRCS =			\
+  m_dummy.c
+
+SH_OBJS = $(SRCS:.c=.so)
+OBJS = $(SRCS:.c=.o)
+
+all: @MOD_TARGET@
+install: all @MOD_INSTALL_TARGET@
+
+build: all
+
+static_modules: generate libmodules.a
+
+generate:
+	sh static_modules.sh $(OBJS)
+
+libmodules.a: $(OBJS) static_modules.o
+	$(RM) -f $@
+	$(AR) cqv $@ $(OBJS) static_modules.o
+	$(RANLIB) $@
+
+shared_modules: $(SH_OBJS)
+
+install_shared_modules:
+	-@if test -d $(PREFIX)/modules-old; then \
+		$(RM) -rf $(PREFIX)/modules-old; \
+	fi
+	-@if test -d $(PREFIX)/modules; then \
+		$(MV) $(PREFIX)/modules $(PREFIX)/modules-old; \
+	fi
+	$(INSTALL) -m 755 -d $(PREFIX)/modules
+	$(INSTALL) -m 755 -d $(PREFIX)/modules/autoload
+	@for i in $(SH_OBJS); do \
+		$(INSTALL) $$i $(PREFIX)/modules/autoload; \
+	done
+	$(INSTALL) m_userserv.so $(PREFIX)/modules
+
+.SUFFIXES: .so .o
+
+.c.o:
+	${CC} ${CPPFLAGS} ${CFLAGS} -c $< -o $@
+
+.c.so:
+	${CC} ${CPPFLAGS} ${CFLAGS} $< -o $@
+
+.PHONY: depend clean distclean
+depend:
+	${MKDEP} ${CPPFLAGS} ${ALL_SRCS} static_modules.c > .depend
+
+clean:
+	${RM} -f *.o *.so *.exe *~ static_modules.c libmodules.a
+
+distclean: clean
+	${RM} -f Makefile
+
+include .depend

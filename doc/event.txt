@@ -1,0 +1,113 @@
+/*  praxis: services for TSora IRC networks.
+ *  doc/event.txt: Event system documentation.
+ *
+ *  Copyright (c) 2004 Eric Will <rakaur@malkier.net>
+ *  Copyright (c) 2003-2004 shrike development team.
+ *
+ *  $Id$
+ */
+
+TABLE OF CONTENTS
+-----------------
+  1. Introduction
+  2. Event API
+  2.1 eventAdd() and eventAddSpecial()
+  2.2 eventPost()
+  3. Notes
+
+1. INTRODUCTION
+---------------
+
+praxis is written with an underlying event-loop as used by threaded and
+GUI applications.  The reason for this is to provide highly modular and highly
+extensible code.
+
+Basically, there's a list of events that can happen (include/events.h).
+Functions can register themselves as wanting to be called when this event
+happens (is "posted").  When the event is posted, all functions relating to
+the event will be called.
+
+This allows for highly modular code.  This also gives modules an easy way to
+get control of certain things.
+
+2. EVENT API
+------------
+
+The event API (EAPI) is outlined below.
+
+2.1 eventAdd() and eventAddSpecial()
+------------------------------------
+
+These two commands provide registering for a function.  If you want a certain
+function to be called when an event is posted, these are the ones you'll want.
+
+eventAdd() works like this:
+
+eventAdd(uint event, uchar (*func)());
+
+The first parameter is an event as listed in include/events.h.  The second
+parameter is a pointer to the function to be called when this event is posted.
+All functions called from the event-loop MUST return type uchar and return 1 on
+success or 0 on failure.  Returning 0 signals the event-loop to stop running
+other registered functions.  All functions called from the event-loop take one
+argument of type void * that may or may not be NULL.
+
+For example, to call "evLogin" when E_CONNECTED is posted:
+    uchar evLogin(void *);
+    eventAdd(E_CONNECTED, evLogin);
+
+If you don't want your function called anymore:
+    uchar evLogin(void *);
+    eventDelete(E_CONNECTED, evLogin);
+
+eventAddSpecial() works in a similiar manner:
+
+eventAddSpecial(uint event, uchar type, uchar (*func)());
+
+The first parameter is the same as above.  The second parameter lets you choose
+to be the first or last function called when an event is posted.  If there's
+already a first or last function registered the attempt will fail.  type is
+1 for first or 2 for last.  The third parameter is the same as above.
+
+For example, to call "evPoopShiz" before anything else when E_DISCONNECTED
+is posted:
+    uchar evPoopShiz(void *);
+    eventAddSpecial(E_DISCONNECTED, 1, evPoopShiz);
+
+To call "evPoopShiz" after anything else when E_DISCONNECTED is posted:
+    uchar evPoopShiz(void *);
+    eventAddSpecial(E_DISCONNECTED, 2, evPoopShiz);
+
+If you don't want your function called anymore:
+    uchar evPoopShiz(void *);
+    eventDeleteSpecial(E_DISCONNECTED, 2, evPoopShiz);
+
+Note that "special" events are usually reserved by praxis itself.
+
+2.2 eventPost()
+---------------
+
+This function posts an event that has "happened."
+
+eventPost() works like this:
+
+eventPost(uint event, void *arg);
+
+The first parameter is the same as above.  The second parameter is the
+argument that will be passed to all called functions.  This can be anything,
+so long as the functions know what to typecast it to before using it.
+
+For example, if the socket to the IRC uplink has just been disconnected:
+    eventPost(E_DISCONNECTED, connection_p);
+
+The second parameter may be NULL:
+    eventPost(E_DISCONNECTED, NULL);
+
+3. NOTES
+--------
+
+If you wish to patch the source so that you add additional events for your
+own needs, make sure that E_LAST is set properly or a lot of things will break.
+
+If you're looking to write a module and add commands, you're probably looking
+in the wrong place.  Check out doc/modules.txt.
