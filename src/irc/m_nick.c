@@ -86,7 +86,7 @@ m_nick(char *origin, uint parc, char *parv[])
             return;
         }
 
-        ilog(L_DEBUG2, "m_nick(): New user: %s!%s@%s -> %s", 
+        ilog(L_DEBUG2, "m_nick(): New user: %s!%s@%s -> %s",
              parv[0], parv[4], parv[5], parv[6]);
 
         /*               nick     user     host     server    UID */

@@ -684,22 +684,22 @@ c_us_default_flags(ConfigEntry *ce)
         return 1;
 
     /* XXX - uncomment this when i do chanserv/userserv
-    for (flce = ce->ce_entries; flce; flce = flce->ce_next)
-    {
-        int val;
+       for (flce = ce->ce_entries; flce; flce = flce->ce_next)
+       {
+       int val;
 
-        val = token_to_value(config_uflags, flce->ce_varname);
+       val = token_to_value(config_uflags, flce->ce_varname);
 
-        if ((val != TOKEN_UNMATCHED) && (val != TOKEN_ERROR))
-            userserv.default_flags |= val;
+       if ((val != TOKEN_UNMATCHED) && (val != TOKEN_ERROR))
+       userserv.default_flags |= val;
 
-        else
-        {
-            ilog(L_INFO, "%s:%d: unknown flag: %s",
-                 flce->ce_fileptr->cf_filename, flce->ce_varlinenum,
-                 flce->ce_varname);
-        }
-    }*/
+       else
+       {
+       ilog(L_INFO, "%s:%d: unknown flag: %s",
+       flce->ce_fileptr->cf_filename, flce->ce_varlinenum,
+       flce->ce_varname);
+       }
+       } */
 
     return 0;
 }

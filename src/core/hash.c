@@ -159,9 +159,9 @@ hashCmd(const char *s)
 
     while (*s)
     {
-        h = (h << 4) + tolower(*s++); /* XXX rfc casemapping */
+        h = (h << 4) + tolower(*s++);   /* XXX rfc casemapping */
 
-        if ((g = (h &  0xF0000000)))
+        if ((g = (h & 0xF0000000)))
             h ^= g >> 24;
 
         h &= ~g;

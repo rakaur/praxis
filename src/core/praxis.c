@@ -47,7 +47,8 @@ static void sigUSR2(int);
  * inputs     - none
  * outputs    - none
  */
-static void printHelp(void)
+static void
+printHelp(void)
 {
     printf("usage: praxis [-c config] [-d level] [-hnv]\n\n");
 
@@ -74,10 +75,6 @@ main(int argc, char *argv[])
     pid_t pid;
     uchar have_conf = 0, ret;
     int r;
-
-printf("NICK: %d\n", hashCmd("NICK"));
-printf("MODE: %d\n", hashCmd("MODE"));
-printf("JESUS: %d\n", hashCmd("JESUS"));
 
     /* Change to our local directory. */
     if (chdir(PREFIX) < 0)
@@ -315,8 +312,8 @@ printf("JESUS: %d\n", hashCmd("JESUS"));
     }
 
     sendIRC(curr_uplink->connection_p,
-                "ERROR :Closing Link: %s %s (Terminating.)",
-                curr_uplink->host, curr_uplink->name);
+            "ERROR :Closing Link: %s %s (Terminating.)",
+            curr_uplink->host, curr_uplink->name);
 
     ilog(L_INFO, "main(): Terminating; io() exited");
 

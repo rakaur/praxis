@@ -219,7 +219,7 @@ evListenReturn(void *arg)
     incoming_addr = ballocHeapAlloc(sa_heap);
 
     accept_sock = accept(connection_p->fd, (struct sockaddr *)incoming_addr,
-                         (socklen_t *)&addrlen);
+                         (socklen_t *) & addrlen);
 
     if (accept_sock < 0)
     {

@@ -16,12 +16,12 @@ typedef struct ModulePath ModulePath;
 
 struct Module
 {
-    char name[256];                  /* file name minus extension */
-    char filename[256];              /* full file name (without path name) */
-    void *handle;                    /* handle returned by dlopen() */
+    char name[256];             /* file name minus extension */
+    char filename[256];         /* full file name (without path name) */
+    void *handle;               /* handle returned by dlopen() */
 
-    ModuleHeader *moduleheader_p;    /* ModuleHeader */
-    ModulePath *modulepath_p;        /* ModulePath */
+    ModuleHeader *moduleheader_p;       /* ModuleHeader */
+    ModulePath *modulepath_p;   /* ModulePath */
 };
 
 struct ModulePath

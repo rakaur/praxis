@@ -92,7 +92,7 @@ moduleAddAll(void)
  * returns    - pointer to Module or NULL on failure
  */
 Module *
-moduleAdd(const char *name, const char *filename, ModulePath * modulepath_p)
+moduleAdd(const char *name, const char *filename, ModulePath *modulepath_p)
 {
     Module *module_p;
 
@@ -120,7 +120,7 @@ moduleAdd(const char *name, const char *filename, ModulePath * modulepath_p)
  * outputs    - pointer to Module or NULL on failure
  */
 Module *
-moduleFind(const char *filename, ModulePath * modulepath_p)
+moduleFind(const char *filename, ModulePath *modulepath_p)
 {
     Module *module_p;
     DLinkNode *node_p;
@@ -172,7 +172,7 @@ moduleFindAny(const char *filename)
  * outputs    - 1 on success or 0 on failure
  */
 uchar
-moduleDelete(Module * module_p)
+moduleDelete(Module *module_p)
 {
     uchar ret;
 
@@ -283,7 +283,7 @@ modulePathFind(const char *path)
  * outputs    - 1 on success or 0 on failure
  */
 uchar
-modulePathDelete(ModulePath * modulepath_p)
+modulePathDelete(ModulePath *modulepath_p)
 {
     uchar ret;
 
@@ -312,7 +312,7 @@ modulePathFlush(void)
 
     DLINK_FOREACH_SAFE(node_p, tnode_p, module_paths.head)
     {
-        ret = modulePathDelete((ModulePath *) node_p->data);
+        ret = modulePathDelete((ModulePath *)node_p->data);
 
         if (ret == 0)
             return 0;
@@ -362,7 +362,7 @@ moduleLoadAll(void)
  * outputs    - 1 on success or 0 on failure
  */
 uchar
-moduleLoad(Module * module_p)
+moduleLoad(Module *module_p)
 {
     ModuleHeader *moduleheader_p;
     void *handle;
@@ -463,7 +463,7 @@ moduleLoad(Module * module_p)
  * outputs    - 1 on success or 0 on failure
  */
 uchar
-moduleUnload(Module * module_p)
+moduleUnload(Module *module_p)
 {
     iassert(module_p != NULL);
 
