@@ -30,6 +30,20 @@ m_ping(char *origin, uint parc, char *parv[])
     {
         server_p = serverFindSID(parv[0]);
 
+        /* I'm not sure if this is a bug with ircd-ratbox or what:
+         * On the initial burst, we get a TS6 to emulate EOB.
+         * However, all PINGs from there on out are TS5.
+         * I'm not sure if that's "the right thing to do,"
+         * but we'll try TS6 first and fall back to TS5.
+         * We'll also send back a TS6 PONG regardless.
+         *
+         * In the long run this doesn't matter; any
+         * activity on the line registers as a reply.
+         * But it bugs me.
+         */
+        if (server_p == NULL)
+            server_p = serverFindName(parv[0]);
+
         iassert(server_p != NULL);
 
         sendIRC(curr_uplink->connection_p,

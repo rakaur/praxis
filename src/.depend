@@ -1,107 +1,114 @@
 balloc.o: core/balloc.c ../include/praxis.h ../include/setup.h \
- ../include/dlink.h ../include/ilog.h ../include/imem.h \
- ../include/timer.h ../include/balloc.h
+  ../include/dlink.h ../include/ilog.h ../include/imem.h \
+  ../include/timer.h ../include/balloc.h
 channel.o: core/channel.c ../include/praxis.h ../include/setup.h \
- ../include/dlink.h ../include/balloc.h ../include/hash.h \
- ../include/ilog.h ../include/channel.h
+  ../include/dlink.h ../include/balloc.h ../include/hash.h \
+  ../include/ilog.h ../include/channel.h
 config.o: core/config.c ../include/praxis.h ../include/setup.h \
- ../include/configparse.h ../include/dlink.h ../include/balloc.h \
- ../include/connection.h ../include/ilog.h ../include/imem.h \
- ../include/module.h ../include/token.h ../include/uplink.h \
- ../include/config.h
-configparse.o: core/configparse.c ../include/praxis.h \
- ../include/setup.h ../include/ilog.h ../include/configparse.h
+  ../include/configparse.h ../include/dlink.h ../include/balloc.h \
+  ../include/connection.h ../include/ilog.h ../include/imem.h \
+  ../include/module.h ../include/token.h ../include/uplink.h \
+  ../include/config.h
+configparse.o: core/configparse.c ../include/praxis.h ../include/setup.h \
+  ../include/ilog.h ../include/configparse.h
 connection.o: core/connection.c ../include/praxis.h ../include/setup.h \
- ../include/dlink.h ../include/balloc.h ../include/events.h \
- ../include/event.h ../include/ilog.h ../include/connection.h \
- ../include/sendq.h ../include/uplink.h
+  ../include/dlink.h ../include/balloc.h ../include/events.h \
+  ../include/event.h ../include/ilog.h ../include/connection.h \
+  ../include/sendq.h ../include/uplink.h
 dlink.o: core/dlink.c ../include/praxis.h ../include/setup.h \
- ../include/dlink.h ../include/balloc.h ../include/ilog.h
+  ../include/dlink.h ../include/balloc.h ../include/ilog.h
 event.o: core/event.c ../include/praxis.h ../include/setup.h \
- ../include/dlink.h ../include/balloc.h ../include/ilog.h \
- ../include/events.h ../include/event.h
+  ../include/dlink.h ../include/balloc.h ../include/ilog.h \
+  ../include/events.h ../include/event.h
 hash.o: core/hash.c ../include/praxis.h ../include/setup.h \
- ../include/ilog.h ../include/hash.h
+  ../include/ilog.h ../include/hash.h
 ilog.o: core/ilog.c ../include/praxis.h ../include/setup.h \
- ../include/dlink.h ../include/ilog.h
+  ../include/dlink.h ../include/ilog.h
 imem.o: core/imem.c ../include/praxis.h ../include/setup.h \
- ../include/dlink.h ../include/imem.h
-io.o: core/io.c ../include/praxis.h ../include/setup.h \
- ../include/dlink.h ../include/balloc.h ../include/channel.h \
- ../include/events.h ../include/event.h ../include/connection.h \
- ../include/ilog.h ../include/imem.h ../include/net.h \
- ../include/server.h ../include/send.h ../include/sendq.h \
- ../include/timer.h ../include/uplink.h ../include/user.h \
- ../include/io.h
+  ../include/dlink.h ../include/imem.h
+io.o: core/io.c ../include/praxis.h ../include/setup.h ../include/dlink.h \
+  ../include/balloc.h ../include/channel.h ../include/events.h \
+  ../include/event.h ../include/connection.h ../include/ilog.h \
+  ../include/imem.h ../include/net.h ../include/server.h \
+  ../include/send.h ../include/sendq.h ../include/timer.h \
+  ../include/uplink.h ../include/user.h ../include/io.h
 irc.o: core/irc.c ../include/praxis.h ../include/setup.h \
- ../include/dlink.h ../include/events.h ../include/event.h \
- ../include/balloc.h ../include/connection.h ../include/hash.h \
- ../include/ilog.h ../include/imem.h ../include/send.h \
- ../include/server.h ../include/uplink.h ../include/irc.h
+  ../include/dlink.h ../include/events.h ../include/event.h \
+  ../include/balloc.h ../include/connection.h ../include/hash.h \
+  ../include/ilog.h ../include/imem.h ../include/send.h \
+  ../include/server.h ../include/uplink.h ../include/irc.h
 module.o: core/module.c ../include/praxis.h ../include/setup.h \
- ../include/dlink.h ../include/balloc.h ../include/ilog.h \
- ../include/imem.h ../include/module.h
+  ../include/dlink.h ../include/balloc.h ../include/ilog.h \
+  ../include/imem.h ../include/module.h
 net.o: core/net.c ../include/praxis.h ../include/setup.h \
- ../include/dlink.h ../include/balloc.h ../include/connection.h \
- ../include/ilog.h ../include/net.h
+  ../include/dlink.h ../include/balloc.h ../include/connection.h \
+  ../include/ilog.h ../include/net.h
 praxis.o: core/praxis.c ../include/praxis.h ../include/setup.h \
- ../include/config.h ../include/dlink.h ../include/balloc.h \
- ../include/connection.h ../include/events.h ../include/event.h \
- ../include/hash.h ../include/ilog.h ../include/imem.h ../include/io.h \
- ../include/module.h ../include/send.h ../include/sendq.h \
- ../include/server.h ../include/timer.h ../include/user.h \
- ../include/channel.h ../include/irc.h ../include/uplink.h
+  ../include/config.h ../include/dlink.h ../include/balloc.h \
+  ../include/connection.h ../include/events.h ../include/event.h \
+  ../include/hash.h ../include/ilog.h ../include/imem.h ../include/io.h \
+  ../include/module.h ../include/send.h ../include/sendq.h \
+  ../include/server.h ../include/timer.h ../include/user.h \
+  ../include/channel.h ../include/irc.h ../include/uplink.h
 send.o: core/send.c ../include/praxis.h ../include/setup.h \
- ../include/dlink.h ../include/balloc.h ../include/connection.h \
- ../include/ilog.h ../include/sendq.h ../include/uplink.h \
- ../include/send.h
+  ../include/dlink.h ../include/balloc.h ../include/connection.h \
+  ../include/ilog.h ../include/sendq.h ../include/uplink.h \
+  ../include/send.h
 sendq.o: core/sendq.c ../include/praxis.h ../include/setup.h \
- ../include/dlink.h ../include/balloc.h ../include/connection.h \
- ../include/ilog.h ../include/sendq.h
+  ../include/dlink.h ../include/balloc.h ../include/connection.h \
+  ../include/ilog.h ../include/sendq.h
 server.o: core/server.c ../include/praxis.h ../include/setup.h \
- ../include/dlink.h ../include/balloc.h ../include/hash.h \
- ../include/ilog.h ../include/server.h
+  ../include/dlink.h ../include/balloc.h ../include/hash.h \
+  ../include/ilog.h ../include/server.h
 timer.o: core/timer.c ../include/praxis.h ../include/setup.h \
- ../include/ilog.h ../include/timer.h
+  ../include/ilog.h ../include/timer.h
 token.o: core/token.c ../include/praxis.h ../include/setup.h \
- ../include/ilog.h ../include/token.h
+  ../include/ilog.h ../include/token.h
 uplink.o: core/uplink.c ../include/praxis.h ../include/setup.h \
- ../include/dlink.h ../include/balloc.h ../include/connection.h \
- ../include/ilog.h ../include/net.h ../include/uplink.h
+  ../include/dlink.h ../include/balloc.h ../include/connection.h \
+  ../include/ilog.h ../include/net.h ../include/uplink.h
 util.o: core/util.c ../include/praxis.h ../include/setup.h \
- ../include/dlink.h
+  ../include/dlink.h
 user.o: core/user.c ../include/praxis.h ../include/setup.h \
- ../include/dlink.h ../include/balloc.h ../include/hash.h \
- ../include/ilog.h ../include/server.h ../include/user.h
+  ../include/dlink.h ../include/balloc.h ../include/hash.h \
+  ../include/ilog.h ../include/server.h ../include/user.h
 version.o: core/version.c
 m_error.o: irc/m_error.c ../include/praxis.h ../include/setup.h \
- ../include/dlink.h ../include/balloc.h ../include/connection.h \
- ../include/ilog.h ../include/irc.h ../include/send.h \
- ../include/uplink.h
+  ../include/dlink.h ../include/balloc.h ../include/connection.h \
+  ../include/ilog.h ../include/irc.h ../include/send.h \
+  ../include/uplink.h
 m_nick.o: irc/m_nick.c ../include/praxis.h ../include/setup.h \
- ../include/dlink.h ../include/balloc.h ../include/connection.h \
- ../include/events.h ../include/event.h ../include/hash.h \
- ../include/ilog.h ../include/irc.h ../include/send.h \
- ../include/server.h ../include/uplink.h ../include/user.h
+  ../include/dlink.h ../include/balloc.h ../include/connection.h \
+  ../include/events.h ../include/event.h ../include/hash.h \
+  ../include/ilog.h ../include/irc.h ../include/send.h \
+  ../include/server.h ../include/uplink.h ../include/user.h
 m_pass.o: irc/m_pass.c ../include/praxis.h ../include/setup.h \
- ../include/dlink.h ../include/balloc.h ../include/connection.h \
- ../include/ilog.h ../include/irc.h ../include/send.h \
- ../include/server.h ../include/uplink.h
+  ../include/dlink.h ../include/balloc.h ../include/connection.h \
+  ../include/ilog.h ../include/irc.h ../include/send.h \
+  ../include/server.h ../include/uplink.h
 m_ping.o: irc/m_ping.c ../include/praxis.h ../include/setup.h \
- ../include/dlink.h ../include/balloc.h ../include/connection.h \
- ../include/ilog.h ../include/irc.h ../include/send.h \
- ../include/server.h ../include/uplink.h
+  ../include/dlink.h ../include/balloc.h ../include/connection.h \
+  ../include/ilog.h ../include/irc.h ../include/send.h \
+  ../include/server.h ../include/uplink.h
 m_quit.o: irc/m_quit.c ../include/praxis.h ../include/setup.h \
- ../include/dlink.h ../include/balloc.h ../include/connection.h \
- ../include/events.h ../include/event.h ../include/ilog.h \
- ../include/irc.h ../include/send.h ../include/server.h \
- ../include/uplink.h ../include/user.h
+  ../include/dlink.h ../include/balloc.h ../include/connection.h \
+  ../include/events.h ../include/event.h ../include/ilog.h \
+  ../include/irc.h ../include/send.h ../include/server.h \
+  ../include/uplink.h ../include/user.h
 m_server.o: irc/m_server.c ../include/praxis.h ../include/setup.h \
- ../include/dlink.h ../include/balloc.h ../include/connection.h \
- ../include/ilog.h ../include/irc.h ../include/send.h \
- ../include/server.h ../include/uplink.h
+  ../include/dlink.h ../include/balloc.h ../include/connection.h \
+  ../include/ilog.h ../include/irc.h ../include/send.h \
+  ../include/server.h ../include/uplink.h
+m_sid.o: irc/m_sid.c ../include/praxis.h ../include/setup.h \
+  ../include/dlink.h ../include/balloc.h ../include/connection.h \
+  ../include/ilog.h ../include/irc.h ../include/send.h \
+  ../include/server.h ../include/uplink.h
+m_squit.o: irc/m_squit.c ../include/praxis.h ../include/setup.h \
+  ../include/dlink.h ../include/balloc.h ../include/connection.h \
+  ../include/ilog.h ../include/irc.h ../include/send.h \
+  ../include/server.h ../include/uplink.h ../include/user.h
 m_uid.o: irc/m_uid.c ../include/praxis.h ../include/setup.h \
- ../include/dlink.h ../include/balloc.h ../include/connection.h \
- ../include/events.h ../include/event.h ../include/ilog.h \
- ../include/irc.h ../include/send.h ../include/server.h \
- ../include/uplink.h ../include/user.h
+  ../include/dlink.h ../include/balloc.h ../include/connection.h \
+  ../include/events.h ../include/event.h ../include/ilog.h \
+  ../include/irc.h ../include/send.h ../include/server.h \
+  ../include/uplink.h ../include/user.h

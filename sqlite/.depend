@@ -1,59 +1,59 @@
-attach.o: attach.c sqliteInt.h config.h sqlite.h hash.h parse.h \
- btree.h vdbe.h opcodes.h
+attach.o: attach.c sqliteInt.h config.h sqlite.h hash.h parse.h btree.h \
+  vdbe.h opcodes.h
 auth.o: auth.c sqliteInt.h config.h sqlite.h hash.h parse.h btree.h \
- vdbe.h opcodes.h
+  vdbe.h opcodes.h
 btree.o: btree.c sqliteInt.h config.h sqlite.h hash.h parse.h btree.h \
- vdbe.h opcodes.h pager.h
+  vdbe.h opcodes.h pager.h
 btree_rb.o: btree_rb.c btree.h sqliteInt.h config.h sqlite.h hash.h \
- parse.h vdbe.h opcodes.h
+  parse.h vdbe.h opcodes.h
 build.o: build.c sqliteInt.h config.h sqlite.h hash.h parse.h btree.h \
- vdbe.h opcodes.h
+  vdbe.h opcodes.h
 copy.o: copy.c sqliteInt.h config.h sqlite.h hash.h parse.h btree.h \
- vdbe.h opcodes.h
-date.o: date.c os.h sqliteInt.h config.h sqlite.h hash.h parse.h \
- btree.h vdbe.h opcodes.h
-delete.o: delete.c sqliteInt.h config.h sqlite.h hash.h parse.h \
- btree.h vdbe.h opcodes.h
+  vdbe.h opcodes.h
+date.o: date.c os.h sqliteInt.h config.h sqlite.h hash.h parse.h btree.h \
+  vdbe.h opcodes.h
+delete.o: delete.c sqliteInt.h config.h sqlite.h hash.h parse.h btree.h \
+  vdbe.h opcodes.h
 expr.o: expr.c sqliteInt.h config.h sqlite.h hash.h parse.h btree.h \
- vdbe.h opcodes.h
+  vdbe.h opcodes.h
 func.o: func.c sqliteInt.h config.h sqlite.h hash.h parse.h btree.h \
- vdbe.h opcodes.h os.h
+  vdbe.h opcodes.h os.h
 hash.o: hash.c sqliteInt.h config.h sqlite.h hash.h parse.h btree.h \
- vdbe.h opcodes.h
-insert.o: insert.c sqliteInt.h config.h sqlite.h hash.h parse.h \
- btree.h vdbe.h opcodes.h
+  vdbe.h opcodes.h
+insert.o: insert.c sqliteInt.h config.h sqlite.h hash.h parse.h btree.h \
+  vdbe.h opcodes.h
 main.o: main.c sqliteInt.h config.h sqlite.h hash.h parse.h btree.h \
- vdbe.h opcodes.h os.h
+  vdbe.h opcodes.h os.h
 opcodes.o: opcodes.c
 os.o: os.c os.h sqliteInt.h config.h sqlite.h hash.h parse.h btree.h \
- vdbe.h opcodes.h
+  vdbe.h opcodes.h
 pager.o: pager.c os.h sqliteInt.h config.h sqlite.h hash.h parse.h \
- btree.h vdbe.h opcodes.h pager.h
+  btree.h vdbe.h opcodes.h pager.h
 parse.o: parse.c sqliteInt.h config.h sqlite.h hash.h parse.h btree.h \
- vdbe.h opcodes.h
-pragma.o: pragma.c sqliteInt.h config.h sqlite.h hash.h parse.h \
- btree.h vdbe.h opcodes.h
-printf.o: printf.c sqliteInt.h config.h sqlite.h hash.h parse.h \
- btree.h vdbe.h opcodes.h
-random.o: random.c sqliteInt.h config.h sqlite.h hash.h parse.h \
- btree.h vdbe.h opcodes.h os.h
-select.o: select.c sqliteInt.h config.h sqlite.h hash.h parse.h \
- btree.h vdbe.h opcodes.h
+  vdbe.h opcodes.h
+pragma.o: pragma.c sqliteInt.h config.h sqlite.h hash.h parse.h btree.h \
+  vdbe.h opcodes.h
+printf.o: printf.c sqliteInt.h config.h sqlite.h hash.h parse.h btree.h \
+  vdbe.h opcodes.h
+random.o: random.c sqliteInt.h config.h sqlite.h hash.h parse.h btree.h \
+  vdbe.h opcodes.h os.h
+select.o: select.c sqliteInt.h config.h sqlite.h hash.h parse.h btree.h \
+  vdbe.h opcodes.h
 table.o: table.c sqliteInt.h config.h sqlite.h hash.h parse.h btree.h \
- vdbe.h opcodes.h
+  vdbe.h opcodes.h
 tokenize.o: tokenize.c sqliteInt.h config.h sqlite.h hash.h parse.h \
- btree.h vdbe.h opcodes.h os.h
-trigger.o: trigger.c sqliteInt.h config.h sqlite.h hash.h parse.h \
- btree.h vdbe.h opcodes.h
-update.o: update.c sqliteInt.h config.h sqlite.h hash.h parse.h \
- btree.h vdbe.h opcodes.h
+  btree.h vdbe.h opcodes.h os.h
+trigger.o: trigger.c sqliteInt.h config.h sqlite.h hash.h parse.h btree.h \
+  vdbe.h opcodes.h
+update.o: update.c sqliteInt.h config.h sqlite.h hash.h parse.h btree.h \
+  vdbe.h opcodes.h
 util.o: util.c sqliteInt.h config.h sqlite.h hash.h parse.h btree.h \
- vdbe.h opcodes.h
-vacuum.o: vacuum.c sqliteInt.h config.h sqlite.h hash.h parse.h \
- btree.h vdbe.h opcodes.h os.h
+  vdbe.h opcodes.h
+vacuum.o: vacuum.c sqliteInt.h config.h sqlite.h hash.h parse.h btree.h \
+  vdbe.h opcodes.h os.h
 vdbe.o: vdbe.c sqliteInt.h config.h sqlite.h hash.h parse.h btree.h \
- vdbe.h opcodes.h os.h vdbeInt.h
-vdbeaux.o: vdbeaux.c sqliteInt.h config.h sqlite.h hash.h parse.h \
- btree.h vdbe.h opcodes.h os.h vdbeInt.h
+  vdbe.h opcodes.h os.h vdbeInt.h
+vdbeaux.o: vdbeaux.c sqliteInt.h config.h sqlite.h hash.h parse.h btree.h \
+  vdbe.h opcodes.h os.h vdbeInt.h
 where.o: where.c sqliteInt.h config.h sqlite.h hash.h parse.h btree.h \
- vdbe.h opcodes.h
+  vdbe.h opcodes.h

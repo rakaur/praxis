@@ -240,6 +240,8 @@ static CmdHashEntry irc_commands[] =
     { "PING",   AC_NA, 0, m_ping   },
     { "QUIT",   AC_NA, 0, m_quit   },
     { "SERVER", AC_NA, 0, m_server },
+    { "SID",    AC_NA, 0, m_sid    },
+    { "SQUIT",  AC_NA, 0, m_squit  },
     { "UID",    AC_NA, 0, m_uid    },
     { NULL,     0,     0, NULL     }
 };

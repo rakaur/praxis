@@ -20,8 +20,8 @@
 /* SERVER <name> <hops> :<gecos>
  *
  * parv[0] = name
- * parv[1] = hops
- * parv[2] = gecos
+ * parv[1] = hops (not used)
+ * parv[2] = gecos (not used)
  */
 void
 m_server(char *origin, uint parc, char *parv[])
@@ -33,6 +33,8 @@ m_server(char *origin, uint parc, char *parv[])
 
         return;
     }
+
+    ilog(L_DEBUG2, "m_server(): New server: %s (%s)", parv[0], parv[2]);
 
     if (cnt.server == 1)
     {

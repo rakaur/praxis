@@ -65,6 +65,8 @@ IRC_SRCS =			\
   irc/m_ping.c			\
   irc/m_quit.c			\
   irc/m_server.c		\
+  irc/m_sid.c			\
+  irc/m_squit.c			\
   irc/m_uid.c
 
 USERSERV_SRCS =			\

@@ -18,7 +18,7 @@ MKDEP		= @CC@ -MM -DNDEBUG
 CFLAGS		= -g -O2 -DNDEBUG
 
 LIBS		= @LIBS@
-LDFLAGS		= @LDFLAGS@
+#LDFLAGS		= @LDFLAGS@
 CPPFLAGS	= @CPPFLAGS@
 
 default: all
@@ -60,15 +60,13 @@ SRCS = ${BASE_SRCS}
 OBJS = ${SRCS:.c=.o}
 
 all: libsqlite.a
-
+install: all
 build: all
 
 libsqlite.a: $(OBJS)
 	$(RM) -f $@
 	$(AR) cqv $@ $(OBJS)
 	$(RANLIB) $@
-
-install: build
 
 .c.o:
 	${CC} ${CPPFLAGS} ${CFLAGS} -c $<
@@ -81,6 +79,6 @@ clean:
 	${RM} -f *.o *.exe *~ version.c praxis.core core praxis libsqlite.a
 
 distclean: clean
-	${RM} -f Makefile version.c.last
+	${RM} -f Makefile
 
 include .depend

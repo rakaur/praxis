@@ -49,6 +49,8 @@ dlinkNodeCreate(void)
 {
     DLinkNode *node_p = ballocHeapAlloc(dlink_heap);
 
+    cnt.node++;
+
     return node_p;
 }
 
@@ -64,6 +66,8 @@ dlinkNodeFree(DLinkNode *node_p)
     iassert(node_p != NULL);
 
     ballocHeapFree(dlink_heap, node_p);
+
+    cnt.node--;
 }
 
 /* dlinkAdd()

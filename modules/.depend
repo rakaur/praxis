@@ -1,2 +1,2 @@
-static_modules.o: static_modules.c ../include/praxis.h \
- ../include/setup.h ../include/ilog.h
+static_modules.o: static_modules.c ../include/praxis.h ../include/setup.h \
+  ../include/ilog.h

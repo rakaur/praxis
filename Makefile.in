@@ -32,7 +32,7 @@ build:
 	@for i in $(SUBDIRS); do \
 		echo "build ==> $$i"; \
 		cd $$i; \
-		${MAKE} || exit; cd ..; \
+		${MAKE} all || exit; cd ..; \
 	done
 
 clean:
@@ -45,6 +45,9 @@ clean:
 	-@if [ -f include/setup.h ] ; then \
 		echo "To really restart installation, make distclean"; \
 	fi
+
+cleansrc:
+	cd src; make clean; cd ..;
 
 distclean:
 	${RM} -f Makefile *~ *.orig core praxis.core
@@ -63,7 +66,7 @@ depend:
 		${MAKE} depend; cd ..; \
 	done
 
-install: all
+install: build
 	$(INSTALL) -m 755 -d $(PREFIX)
 	$(INSTALL) -m 755 -d $(PREFIX)/var
 	$(INSTALL) -m 755 -d $(PREFIX)/etc

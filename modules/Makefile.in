@@ -32,7 +32,7 @@ SH_OBJS = $(SRCS:.c=.so)
 OBJS = $(SRCS:.c=.o)
 
 all: @MOD_TARGET@
-install: all @MOD_INSTALL_TARGET@
+install: build @MOD_INSTALL_TARGET@
 
 build: all
 

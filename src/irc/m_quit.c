@@ -27,6 +27,8 @@
 void
 m_quit(char *origin, uint parc, char *parv[])
 {
+    ilog(L_DEBUG2, "m_quit(): User leaving: %s", origin);
+
     if (curr_uplink->ts_version == 6)
         userFindUIDDelete(origin);
     else

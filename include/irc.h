@@ -35,6 +35,8 @@ extern void m_pass(char *, uint, char **);
 extern void m_ping(char *, uint, char **);
 extern void m_quit(char *, uint, char **);
 extern void m_server(char *, uint, char **);
+extern void m_sid(char *, uint, char **);
+extern void m_squit(char *, uint, char **);
 extern void m_uid(char *, uint, char **);
 
 void ircInit(void);
