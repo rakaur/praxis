@@ -30,6 +30,7 @@ struct CmdHashEntry
 CmdHashEntry *irc_cmd_hash[CMD_HASH_SIZE];
 
 extern void m_error(char *, uint, char **);
+extern void m_kill(char *, uint, char **);
 extern void m_nick(char *, uint, char **);
 extern void m_pass(char *, uint, char **);
 extern void m_ping(char *, uint, char **);

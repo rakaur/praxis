@@ -235,6 +235,7 @@ ircParse(void *arg)
 static CmdHashEntry irc_commands[] =
 {
     { "ERROR",  AC_NA, 0, m_error  },
+    { "KILL",   AC_NA, 0, m_kill   },
     { "NICK",   AC_NA, 0, m_nick   },
     { "PASS",   AC_NA, 0, m_pass   },
     { "PING",   AC_NA, 0, m_ping   },

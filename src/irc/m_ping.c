@@ -28,21 +28,24 @@ m_ping(char *origin, uint parc, char *parv[])
 
     if (curr_uplink->ts_version == 6)
     {
-        server_p = serverFindSID(parv[0]);
-
-        /* I'm not sure if this is a bug with ircd-ratbox or what:
-         * On the initial burst, we get a TS6 to emulate EOB.
+        /* On the initial burst, we get a TS6 to emulate EOB.
          * However, all PINGs from there on out are TS5.
          * I'm not sure if that's "the right thing to do,"
-         * but we'll try TS6 first and fall back to TS5.
+         * but we'll try TS5 first and fall back to TS6.
          * We'll also send back a TS6 PONG regardless.
          *
+         * androsyn tells me this is done because hybrid-7.1
+         * chokes on SIDs in PING... still doesn't explain
+         * the TS6 EOB PING though.
+         *
          * In the long run this doesn't matter; any
-         * activity on the line registers as a reply.
-         * But it bugs me.
+         * activity on the line registers as a reply,
+         * but it still bugs me.
          */
+        server_p = serverFindName(parv[0]);
+
         if (server_p == NULL)
-            server_p = serverFindName(parv[0]);
+            server_p = serverFindSID(parv[0]);
 
         iassert(server_p != NULL);
 

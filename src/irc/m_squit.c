@@ -4,7 +4,7 @@
  *  Copyright (c) 2004 Eric Will <rakaur@malkier.net>
  *  Copyright (c) 2003-2004 shrike development team.
  *
- *  $Id: m_server.c 2 2004-06-29 05:30:31Z rakaur $
+ *  $Id$
  */
 
 #include "praxis.h"

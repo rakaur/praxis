@@ -60,6 +60,7 @@ CORE_SRCS =			\
 
 IRC_SRCS =			\
   irc/m_error.c			\
+  irc/m_kill.c			\
   irc/m_nick.c			\
   irc/m_pass.c			\
   irc/m_ping.c			\
