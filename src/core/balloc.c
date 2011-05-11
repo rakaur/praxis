@@ -375,7 +375,7 @@ ballocHeapGarbage(Heap *heap_p)
 
     while (walker != NULL)
     {
-        if ((dlinkLength(&walker->free_list) == heap_p->elems_per_block))
+        if (dlinkLength(&walker->free_list) == heap_p->elems_per_block)
         {
             ballocFree(walker->elems, walker->alloc_size);
 

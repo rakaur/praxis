@@ -678,8 +678,6 @@ c_us_max_users(ConfigEntry *ce)
 static uchar
 c_us_default_flags(ConfigEntry *ce)
 {
-    ConfigEntry *flce;
-
     if (userserv.enabled == 0)
         return 1;
 
@@ -813,8 +811,6 @@ c_cs_part_chans(ConfigEntry *ce)
 static uchar
 c_cs_default_flags(ConfigEntry *ce)
 {
-    ConfigEntry *flce;
-
     if (chanserv.enabled == 0)
         return 1;
 

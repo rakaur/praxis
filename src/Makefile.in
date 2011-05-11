@@ -20,7 +20,7 @@ MKDEP		= @CC@ -MM -I../include -DPREFIX=\"@prefix@\"
 #CFLAGS		= -g -O2 -Wall
 
 # Developer CFLAGS
-CFLAGS		= -g -O0 -Wunused -Wall -ggdb -pedantic -Wshadow -Wmissing-declarations -Wno-long-long
+CFLAGS		= -g -O0 -Wunused -Wall -ggdb -std=gnu99 -pedantic -Wshadow -Wmissing-declarations -Wno-long-long
 
 CFLAGS		+= -I../include -DPREFIX=\"@prefix@\"
 

@@ -52,7 +52,7 @@ eventAdd(uint event, uchar (*func) ())
 
     ilog(L_DEBUG2, "eventAdd(): Registering function for event: %d", event);
 
-    dlinkAddTailAlloc(func, &event_table[event].func_list);
+    dlinkAddTailAlloc((void *)func, &event_table[event].func_list);
 }
 
 /* eventAddSpecial()
@@ -113,7 +113,7 @@ eventDelete(uint event, uchar (*func) ())
     ilog(L_DEBUG2, "eventDelete(): Unregistering function for event: %d",
          event);
 
-    ret = dlinkFindDestroy(func, &event_table[event].func_list);
+    ret = dlinkFindDestroy((void *)func, &event_table[event].func_list);
 
     if (ret == 0)
     {
@@ -246,7 +246,7 @@ eventRun(void)
         /* If there are function list entries, call them. */
         DLINK_FOREACH(node2_p, event_table[eventq_p->event].func_list.head)
         {
-            func = node2_p->data;
+            func = (uchar (*) ())node2_p->data;
 
             if (terminated == 1)
                 break;
